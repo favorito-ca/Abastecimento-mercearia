@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Abastecimento de Mercearia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F4F0E4;
+    --verde:#2C5F3F;
+    --verde-escuro:#163524;
+    --verde-claro:#E4EEE3;
+    --laranja:#E2672B;
+    --laranja-escuro:#B94F1D;
+    --texto:#20201A;
+    --branco:#FFFFFF;
+    --vermelho:#B23A2F;
+    --cinza:#8A8576;
+    --borda:#DDD6C2;
+    --sombra:0 4px 14px rgba(22,53,36,0.10);
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--texto);
+    font-family:'Inter',sans-serif;
+    padding-bottom:60px;
+    overflow-x:hidden;
+  }
+
+  /* ===== ANIMAÇÕES GERAIS ===== */
+  @keyframes fadeInDown{
+    from{opacity:0; transform:translateY(-18px);}
+    to{opacity:1; transform:translateY(0);}
+  }
+  @keyframes fadeInUp{
+    from{opacity:0; transform:translateY(16px) scale(.96);}
+    to{opacity:1; transform:translateY(0) scale(1);}
+  }
+  @keyframes popIn{
+    0%{opacity:0; transform:scale(.85);}
+    70%{opacity:1; transform:scale(1.03);}
+    100%{opacity:1; transform:scale(1);}
+  }
+  @keyframes flutuar{
+    0%,100%{transform:translateY(0) rotate(0deg);}
+    50%{transform:translateY(-10px) rotate(6deg);}
+  }
+  @keyframes flutuar2{
+    0%,100%{transform:translateY(0) rotate(0deg);}
+    50%{transform:translateY(8px) rotate(-8deg);}
+  }
+  @keyframes pulsoSelecionado{
+    0%{box-shadow:0 0 0 0 rgba(226,103,43,0.45);}
+    70%{box-shadow:0 0 0 12px rgba(226,103,43,0);}
+    100%{box-shadow:0 0 0 0 rgba(226,103,43,0);}
+  }
+  @keyframes slideInLeft{
+    from{opacity:0; transform:translateX(-26px);}
+    to{opacity:1; transform:translateX(0);}
+  }
+  @keyframes saidaRegistro{
+    from{opacity:1; transform:scale(1) translateX(0); max-height:90px;}
+    to{opacity:0; transform:scale(.9) translateX(40px); max-height:0; margin:0; padding:0;}
+  }
+  @keyframes brilhoBotao{
+    0%{transform:translateY(0) scale(1);}
+    40%{transform:translateY(-4px) scale(1.12);}
+    100%{transform:translateY(0) scale(1);}
+  }
+  @keyframes girarMais{
+    from{transform:rotate(0deg);}
+    to{transform:rotate(180deg);}
+  }
+  @keyframes derivar1{
+    0%{transform:translate(0,0) rotate(0deg);}
+    25%{transform:translate(40px,-60px) rotate(15deg);}
+    50%{transform:translate(-20px,-120px) rotate(-10deg);}
+    75%{transform:translate(-60px,-40px) rotate(8deg);}
+    100%{transform:translate(0,0) rotate(0deg);}
+  }
+  @keyframes derivar2{
+    0%{transform:translate(0,0) rotate(0deg);}
+    30%{transform:translate(-50px,40px) rotate(-12deg);}
+    60%{transform:translate(30px,90px) rotate(10deg);}
+    100%{transform:translate(0,0) rotate(0deg);}
+  }
+  @keyframes derivar3{
+    0%{transform:translate(0,0) rotate(0deg);}
+    35%{transform:translate(60px,30px) rotate(10deg);}
+    70%{transform:translate(10px,-70px) rotate(-14deg);}
+    100%{transform:translate(0,0) rotate(0deg);}
+  }
+
+  /* ===== FUNDO ANIMADO ===== */
+  .fundo-animado{
+    position:fixed;
+    inset:0;
+    z-index:-1;
+    overflow:hidden;
+    pointer-events:none;
+  }
+  .fundo-animado span{
+    position:absolute;
+    opacity:0.10;
+    color:var(--verde);
+    filter:grayscale(0.1);
+    will-change:transform;
+  }
+
+  /* ===== HEADER ===== */
+  header.topo{
+    background:var(--verde-escuro);
+    color:var(--bg);
+    padding:38px 20px 46px;
+    text-align:center;
+    position:relative;
+    overflow:hidden;
+    clip-path: polygon(0 0,100% 0,100% 92%,98% 100%,94% 92%,90% 100%,86% 92%,82% 100%,78% 92%,74% 100%,70% 92%,66% 100%,62% 92%,58% 100%,54% 92%,50% 100%,46% 92%,42% 100%,38% 92%,34% 100%,30% 92%,26% 100%,22% 92%,18% 100%,14% 92%,10% 100%,6% 92%,2% 100%,0 92%);
+    margin-bottom:28px;
+    animation:fadeInDown .6s ease both;
+  }
+  header.topo .decor{
+    position:absolute;
+    font-size:30px;
+    opacity:0.18;
+    pointer-events:none;
+    filter:grayscale(0.2);
+  }
+  header.topo .decor.d1{top:14%; left:6%; animation:flutuar 6s ease-in-out infinite;}
+  header.topo .decor.d2{top:60%; left:14%; font-size:22px; animation:flutuar2 7s ease-in-out infinite;}
+  header.topo .decor.d3{top:18%; right:7%; animation:flutuar2 5.5s ease-in-out infinite;}
+  header.topo .decor.d4{top:58%; right:15%; font-size:22px; animation:flutuar 6.5s ease-in-out infinite;}
+  header.topo h1{
+    font-family:'Archivo Black',sans-serif;
+    font-size:clamp(28px,6vw,46px);
+    letter-spacing:0.5px;
+    margin:0;
+    line-height:1.15;
+    text-transform:uppercase;
+    position:relative;
+    z-index:1;
+  }
+  header.topo h1 span{color:var(--laranja); display:inline-block;}
+  header.topo p{
+    margin:10px 0 0;
+    font-size:14px;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    color:#C9D9C2;
+    font-weight:600;
+    position:relative;
+    z-index:1;
+    animation:fadeInDown .8s ease .15s both;
+  }
+
+  main{max-width:980px;margin:0 auto;padding:0 16px;}
+
+  /* ===== TOOLBAR ===== */
+  .toolbar{
+    display:flex;
+    gap:12px;
+    margin-bottom:18px;
+  }
+  .busca-caixa{
+    flex:1;
+    position:relative;
+    display:flex;
+    align-items:center;
+  }
+  .busca-caixa svg{
+    position:absolute;
+    left:14px;
+    width:16px;height:16px;
+    color:var(--cinza);
+    pointer-events:none;
+  }
+  .busca-caixa input{
+    width:100%;
+    padding:12px 14px 12px 38px;
+    border:2px solid var(--borda);
+    border-radius:10px;
+    font-family:'Inter',sans-serif;
+    font-size:14px;
+    background:var(--branco);
+    color:var(--texto);
+  }
+  .busca-caixa input:focus{outline:none;border-color:var(--verde);}
+  .busca-caixa .limpar-busca{
+    position:absolute;
+    right:8px;
+    background:none;
+    border:none;
+    color:var(--cinza);
+    font-size:16px;
+    cursor:pointer;
+    padding:6px;
+    display:none;
+  }
+  .busca-caixa .limpar-busca.visivel{display:block;}
+  @media (max-width:560px){
+    .toolbar{flex-direction:column-reverse;}
+  }
+
+  /* ===== CATEGORIAS ===== */
+  .categorias-filtro{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-bottom:20px;
+  }
+  .chip-categoria{
+    border:2px solid var(--borda);
+    background:var(--branco);
+    color:var(--verde-escuro);
+    font-family:'Inter',sans-serif;
+    font-weight:700;
+    font-size:12.5px;
+    padding:7px 14px;
+    border-radius:20px;
+    cursor:pointer;
+    transition:all .15s ease;
+    opacity:0;
+    animation:fadeInUp .35s ease both;
+  }
+  .chip-categoria:hover{border-color:var(--verde);}
+  .chip-categoria.ativa{background:var(--verde-escuro);border-color:var(--verde-escuro);color:#fff;}
+  .btn{
+    border:none;
+    cursor:pointer;
+    font-family:'Inter',sans-serif;
+    font-weight:700;
+    border-radius:10px;
+    padding:12px 18px;
+    font-size:14px;
+    transition:transform .12s ease, box-shadow .12s ease, background .12s ease;
+  }
+  .btn:active{transform:scale(0.96);}
+  .btn-primario{background:var(--laranja);color:#fff;box-shadow:var(--sombra);}
+  .btn-primario:hover{background:var(--laranja-escuro);}
+  .btn-secundario{background:var(--branco);color:var(--verde-escuro);border:2px solid var(--borda);}
+  .btn-secundario:hover{border-color:var(--verde);}
+  .btn-perigo{background:var(--vermelho);color:#fff;}
+  .btn-perigo:hover{background:#8f2e25;}
+
+  /* ===== SECTION TITLES ===== */
+  .titulo-secao{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin:0 0 16px;
+    font-size:13px;
+    text-transform:uppercase;
+    letter-spacing:1.5px;
+    font-weight:800;
+    color:var(--verde-escuro);
+  }
+  .titulo-secao::before{
+    content:"";
+    width:22px;height:4px;
+    background:var(--laranja);
+    border-radius:2px;
+    display:inline-block;
+  }
+
+  /* ===== CATALOGO ===== */
+  .catalogo-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(250px,1fr));
+    gap:18px;
+    margin-bottom:36px;
+  }
+  .produto-card{
+    background:var(--branco);
+    border:2px solid var(--borda);
+    border-radius:16px;
+    padding:14px;
+    cursor:pointer;
+    position:relative;
+    text-align:center;
+    transition:border-color .15s ease, transform .2s ease, box-shadow .2s ease;
+    opacity:0;
+    animation:fadeInUp .45s ease both;
+    overflow:hidden;
+  }
+  .produto-card:hover{border-color:var(--verde);box-shadow:0 10px 24px rgba(22,53,36,0.16);transform:translateY(-4px);}
+  .produto-card:hover img{transform:scale(1.08);}
+  .produto-card.selecionado{border-color:var(--laranja);background:#FFF5EE;animation:fadeInUp .45s ease both, pulsoSelecionado 1.4s ease 1;}
+  .produto-card .img-wrap{
+    width:100%;
+    height:clamp(180px, 34vw, 280px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+    margin-bottom:10px;
+    border-radius:10px;
+  }
+  .produto-card img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+    transition:transform .35s ease;
+  }
+  .produto-card .nome{
+    font-weight:700;
+    font-size:15.5px;
+    line-height:1.3;
+    color:var(--texto);
+  }
+  .produto-card .acoes-produto{
+    position:absolute;
+    top:8px;
+    right:8px;
+    display:flex;
+    gap:5px;
+  }
+  .icone-mini{
+    width:28px;height:28px;
+    border-radius:50%;
+    border:none;
+    font-size:13px;
+    cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    background:var(--verde-claro);
+    color:var(--verde-escuro);
+  }
+  .icone-mini.excluir{background:#F7DEDA;color:var(--vermelho);}
+  .icone-mini.favorito{background:#FFF3D6;color:#B8860B;font-size:14px;}
+  .icone-mini.favorito.ativo{background:#FFD86B;color:#8A5B00;}
+  .icone-mini:hover{filter:brightness(0.92);}
+  .icone-mini:active{transform:scale(0.88);}
+  .selo-favorito{
+    position:absolute;
+    top:8px;
+    left:8px;
+    background:#FFD86B;
+    color:#5C3D00;
+    font-size:11px;
+    font-weight:800;
+    padding:4px 9px 4px 7px;
+    border-radius:20px;
+    display:flex;
+    align-items:center;
+    gap:3px;
+    box-shadow:0 2px 6px rgba(0,0,0,0.12);
+    animation:popIn .3s ease both;
+  }
+
+  .card-add{
+    border:2px dashed var(--borda);
+    background:transparent;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    color:var(--cinza);
+    font-weight:700;
+    min-height:clamp(240px, 38vw, 340px);
+    transition:border-color .2s ease, color .2s ease, transform .2s ease;
+  }
+  .card-add:hover{border-color:var(--verde);color:var(--verde);transform:translateY(-4px);}
+  .card-add:hover .mais{animation:girarMais .3s ease forwards;}
+  .card-add .mais{font-size:34px;line-height:1;display:inline-block;}
+
+  .sem-resultado{
+    grid-column:1 / -1;
+    text-align:center;
+    color:var(--cinza);
+    font-size:14px;
+    padding:30px 0;
+    border:2px dashed var(--borda);
+    border-radius:12px;
+  }
+
+  /* ===== QUANTIDADE ===== */
+  .quantidade-area{
+    background:var(--verde-claro);
+    border-radius:18px;
+    padding:24px 18px;
+    margin-bottom:36px;
+    text-align:center;
+    border:2px solid #CFE2CB;
+    animation:fadeInUp .4s ease both;
+  }
+  .quantidade-area.escondido{display:none;}
+  .quantidade-area h2{
+    margin:0 0 4px;
+    font-size:18px;
+    color:var(--verde-escuro);
+  }
+  .quantidade-area .legenda{
+    font-size:13px;
+    color:var(--cinza);
+    margin-bottom:18px;
+  }
+  .quantidade-botoes{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:12px;
+    margin-bottom:18px;
+  }
+  .qtd-tag{
+    width:54px;height:54px;
+    border-radius:50%;
+    border:none;
+    cursor:pointer;
+    font-family:'Archivo Black',sans-serif;
+    font-size:20px;
+    color:#fff;
+    background:var(--laranja);
+    box-shadow:0 3px 0 var(--laranja-escuro);
+    transition:transform .1s ease;
+    opacity:0;
+    animation:popIn .35s ease both;
+  }
+  .qtd-tag:hover{transform:translateY(-2px) scale(1.05);}
+  .qtd-tag:active{animation:brilhoBotao .25s ease;box-shadow:0 1px 0 var(--laranja-escuro);}
+
+  /* ===== REGISTROS ===== */
+  .registro-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:16px;
+  }
+  .registro-header .titulo-secao{margin:0;}
+  #listaRegistros{display:flex;flex-direction:column;gap:10px;}
+  .registro-item{
+    background:var(--branco);
+    border:2px solid var(--borda);
+    border-radius:12px;
+    padding:10px 14px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    opacity:0;
+    animation:slideInLeft .35s ease both;
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .registro-item:hover{box-shadow:var(--sombra);}
+  .registro-item.saindo{animation:saidaRegistro .3s ease forwards;}
+  .registro-item img{width:84px;height:84px;object-fit:contain;border-radius:10px;background:var(--verde-claro);}
+  .registro-info{flex:1;}
+  .registro-info .nome{font-weight:700;font-size:14.5px;}
+  .registro-info .data{font-size:11.5px;color:var(--cinza);}
+  .registro-qtd{
+    background:var(--verde-escuro);
+    color:#fff;
+    font-family:'Archivo Black',sans-serif;
+    font-size:15px;
+    width:38px;height:38px;
+    border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .btn-remover-registro{
+    background:none;border:none;color:var(--vermelho);
+    font-size:18px;cursor:pointer;padding:4px 8px;
+  }
+  .vazio{
+    text-align:center;
+    color:var(--cinza);
+    font-size:14px;
+    padding:30px 0;
+    border:2px dashed var(--borda);
+    border-radius:12px;
+  }
+
+  /* ===== MODAL ===== */
+  @keyframes fadeInModal{from{opacity:0;} to{opacity:1;}}
+  .modal-fundo{
+    position:fixed;inset:0;
+    background:rgba(22,53,36,0.55);
+    display:flex;align-items:center;justify-content:center;
+    padding:16px;
+    z-index:50;
+    animation:fadeInModal .2s ease both;
+  }
+  .modal-fundo.escondido{display:none;}
+  .modal-caixa{
+    background:#fff;
+    border-radius:16px;
+    padding:24px;
+    width:100%;
+    max-width:380px;
+    animation:popIn .28s ease both;
+  }
+  .modal-caixa h3{margin:0 0 16px;color:var(--verde-escuro);}
+  .campo{display:block;margin-bottom:14px;font-size:13px;font-weight:700;color:var(--verde-escuro);}
+  .campo input{
+    width:100%;
+    margin-top:6px;
+    padding:10px 12px;
+    border:2px solid var(--borda);
+    border-radius:8px;
+    font-size:14px;
+    font-family:'Inter',sans-serif;
+  }
+  .campo input:focus{outline:none;border-color:var(--verde);}
+  .campo-arquivo{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-top:6px;
+  }
+  .campo-arquivo input[type="file"]{display:none;}
+  .btn-escolher-arquivo{
+    background:var(--verde-claro);
+    color:var(--verde-escuro);
+    border:2px dashed #BFD8B8;
+    border-radius:8px;
+    padding:10px 14px;
+    font-size:13px;
+    font-weight:700;
+    cursor:pointer;
+    flex:1;
+    text-align:center;
+  }
+  .btn-escolher-arquivo:hover{border-color:var(--verde);}
+  .nome-arquivo{
+    font-size:12px;
+    color:var(--cinza);
+    margin-top:6px;
+    word-break:break-all;
+  }
+  .preview-imagem{
+    width:100%;height:200px;
+    background:var(--verde-claro);
+    border-radius:10px;
+    display:flex;align-items:center;justify-content:center;
+    margin-bottom:16px;
+    overflow:hidden;
+    transition:background .2s ease;
+  }
+  .preview-imagem img{max-width:100%;max-height:100%;object-fit:contain;animation:popIn .3s ease both;}
+  .preview-imagem span{color:var(--cinza);font-size:12px;}
+  .modal-acoes{display:flex;gap:10px;justify-content:flex-end;}
+
+  /* ===== COMPARTILHAR ===== */
+  .btn-compartilhar{background:var(--verde);color:#fff;}
+  .btn-compartilhar:hover{background:var(--verde-escuro);}
+  .preview-texto{
+    background:var(--verde-claro);
+    border:2px solid #CFE2CB;
+    border-radius:10px;
+    padding:14px;
+    font-size:13px;
+    line-height:1.5;
+    color:var(--texto);
+    white-space:pre-wrap;
+    max-height:260px;
+    overflow-y:auto;
+    margin-bottom:16px;
+  }
+  .btn-whatsapp{background:#25D366;color:#fff;}
+  .btn-whatsapp:hover{background:#1DA851;}
+
+  /* ===== TOAST ===== */
+  @keyframes toastEntra{
+    from{opacity:0; transform:translate(-50%,14px);}
+    to{opacity:1; transform:translate(-50%,0);}
+  }
+  .toast{
+    position:fixed;
+    left:50%;
+    bottom:26px;
+    transform:translate(-50%,14px);
+    background:var(--verde-escuro);
+    color:#fff;
+    padding:12px 20px;
+    border-radius:30px;
+    font-size:13.5px;
+    font-weight:700;
+    box-shadow:0 8px 22px rgba(0,0,0,0.25);
+    z-index:100;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .25s ease, transform .25s ease;
+  }
+  .toast.visivel{
+    opacity:1;
+    transform:translate(-50%,0);
+    animation:toastEntra .25s ease both;
+  }
+
+  .hidden{display:none;}
+
+  @media (max-width:480px){
+    .catalogo-grid{grid-template-columns:repeat(auto-fill,minmax(155px,1fr));}
+    .produto-card .img-wrap{height:clamp(140px, 40vw, 220px);}
+  }
+
+  :focus-visible{outline:3px solid var(--laranja);outline-offset:2px;}
+</style>
+</head>
+<body>
+
+<div class="fundo-animado" aria-hidden="true">
+  <span style="top:6%; left:8%; font-size:46px; animation:derivar1 18s ease-in-out infinite;">🛒</span>
+  <span style="top:18%; left:78%; font-size:38px; animation:derivar2 22s ease-in-out infinite;">🥫</span>
+  <span style="top:34%; left:20%; font-size:34px; animation:derivar3 20s ease-in-out infinite;">🍚</span>
+  <span style="top:48%; left:62%; font-size:42px; animation:derivar1 25s ease-in-out infinite reverse;">📦</span>
+  <span style="top:62%; left:10%; font-size:36px; animation:derivar2 19s ease-in-out infinite;">🍞</span>
+  <span style="top:74%; left:84%; font-size:40px; animation:derivar3 23s ease-in-out infinite reverse;">🧴</span>
+  <span style="top:86%; left:35%; font-size:32px; animation:derivar1 21s ease-in-out infinite;">🥛</span>
+  <span style="top:10%; left:48%; font-size:30px; animation:derivar2 24s ease-in-out infinite reverse;">🍝</span>
+</div>
+
+<header class="topo" id="topo">
+  <span class="decor d1">🛒</span>
+  <span class="decor d2">📦</span>
+  <span class="decor d3">🥫</span>
+  <span class="decor d4">🍚</span>
+  <h1>Abastecimento de <span>Mercearia</span></h1>
+  <p>Selecione o produto · informe a quantidade · registre o reabastecimento</p>
+</header>
+
+<main>
+
+  <div class="toolbar">
+    <div class="busca-caixa">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="inputBusca" placeholder="Pesquisar produto...">
+      <button class="limpar-busca" id="btnLimparBusca" title="Limpar pesquisa">✕</button>
+    </div>
+    <button class="btn btn-primario" id="btnNovoProduto">+ Novo produto</button>
+  </div>
+
+  <div class="categorias-filtro" id="categoriasFiltro"></div>
+
+  <h2 class="titulo-secao">Produtos do setor</h2>
+  <section class="catalogo-grid" id="catalogo"></section>
+
+  <section class="quantidade-area escondido" id="quantidadeArea">
+    <h2>Quantidade para <span id="nomeSelecionado"></span></h2>
+    <p class="legenda">Quantas vezes vai abastecer este produto?</p>
+    <div class="quantidade-botoes" id="quantidadeBotoes"></div>
+    <button class="btn btn-secundario" id="btnCancelarSelecao">Cancelar seleção</button>
+  </section>
+
+  <div class="registro-header">
+    <h2 class="titulo-secao">Itens registrados para abastecer</h2>
+    <div style="display:flex; gap:8px;">
+      <button class="btn btn-compartilhar" id="btnCompartilhar">📤 Compartilhar</button>
+      <button class="btn btn-perigo" id="btnLimparTudo">Excluir todos</button>
+    </div>
+  </div>
+  <div id="listaRegistros"></div>
+
+</main>
+
+<!-- MODAL PRODUTO -->
+<div class="modal-fundo escondido" id="modalFundo">
+  <div class="modal-caixa">
+    <h3 id="modalTitulo">Novo produto</h3>
+    <label class="campo">Nome do produto
+      <input type="text" id="inputNome" placeholder="Ex: Biscoito Cream Cracker">
+    </label>
+    <label class="campo">Categoria
+      <input type="text" id="inputCategoria" list="listaCategorias" placeholder="Ex: Limpeza, Bebidas, Enlatados...">
+      <datalist id="listaCategorias"></datalist>
+    </label>
+    <label class="campo">Foto do produto
+      <div class="campo-arquivo">
+        <label class="btn-escolher-arquivo" for="inputImagem">📷 Escolher da galeria / câmera</label>
+        <input type="file" id="inputImagem" accept="image/*">
+      </div>
+      <div class="nome-arquivo" id="nomeArquivoSelecionado"></div>
+    </label>
+    <div class="preview-imagem" id="previewImagem"><span>Pré-visualização da imagem</span></div>
+    <div class="modal-acoes">
+      <button class="btn btn-secundario" id="btnCancelarModal">Cancelar</button>
+      <button class="btn btn-primario" id="btnSalvarProduto">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL COMPARTILHAR -->
+<div class="modal-fundo escondido" id="modalCompartilhar">
+  <div class="modal-caixa">
+    <h3>Compartilhar lista de abastecimento</h3>
+    <div class="preview-texto" id="previewTextoCompartilhar"></div>
+    <div class="modal-acoes" style="justify-content:space-between; flex-wrap:wrap; gap:8px;">
+      <button class="btn btn-secundario" id="btnFecharCompartilhar">Fechar</button>
+      <div style="display:flex; gap:8px;">
+        <button class="btn btn-primario" id="btnCopiarTexto">📋 Copiar</button>
+        <button class="btn btn-whatsapp" id="btnEnviarWhatsapp">📲 WhatsApp</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const ICONE_PADRAO = 'data:image/svg+xml;utf8,' + encodeURIComponent(`
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect x="10" y="18" width="44" height="36" rx="4" fill="#2C5F3F" opacity="0.15"/><path d="M18 18l3-10h22l3 10" fill="none" stroke="#2C5F3F" stroke-width="3"/><line x1="10" y1="28" x2="54" y2="28" stroke="#2C5F3F" stroke-width="3"/></svg>`);
+
+const CHAVE_PRODUTOS = 'mercearia_produtos_v1';
+const CHAVE_REGISTROS = 'mercearia_registros_v1';
+
+const CATEGORIAS_SUGERIDAS = ['Grãos e Cereais','Enlatados e Conservas','Bebidas','Limpeza','Higiene e Perfumaria','Massas','Açúcar e Adoçantes','Óleos e Temperos','Outros'];
+
+const produtosPadrao = [
+  {nome:'Biscoito Cream Cracker', categoria:'Outros'},
+  {nome:'Arroz', categoria:'Grãos e Cereais'},
+  {nome:'Feijão', categoria:'Grãos e Cereais'},
+  {nome:'Açúcar Refinado', categoria:'Açúcar e Adoçantes'},
+  {nome:'Óleo de Soja', categoria:'Óleos e Temperos'},
+  {nome:'Café em Pó', categoria:'Bebidas'},
+  {nome:'Macarrão Espaguete', categoria:'Massas'},
+  {nome:'Sal Refinado', categoria:'Óleos e Temperos'},
+  {nome:'Farinha de Trigo', categoria:'Grãos e Cereais'},
+  {nome:'Molho de Tomate', categoria:'Enlatados e Conservas'},
+  {nome:'Leite em Pó', categoria:'Bebidas'},
+  {nome:'Vinho Tinto', categoria:'Bebidas'}
+].map((p,i)=>({id:'p'+i, nome:p.nome, imagem:'', categoria:p.categoria, favorito:false}));
+
+function carregar(chave, padrao){
+  try{
+    const dados = localStorage.getItem(chave);
+    return dados ? JSON.parse(dados) : padrao;
+  }catch(e){ return padrao; }
+}
+function salvar(chave, valor){
+  try{
+    localStorage.setItem(chave, JSON.stringify(valor));
+  }catch(e){
+    alert('Não foi possível salvar: o armazenamento do navegador está cheio. Tente usar fotos menores ou remover produtos antigos.');
+  }
+}
+
+let produtos = carregar(CHAVE_PRODUTOS, produtosPadrao);
+let registros = carregar(CHAVE_REGISTROS, []);
+let produtoSelecionadoId = null;
+let modoEdicaoId = null;
+
+const elCatalogo = document.getElementById('catalogo');
+const elQuantidadeArea = document.getElementById('quantidadeArea');
+const elQuantidadeBotoes = document.getElementById('quantidadeBotoes');
+const elNomeSelecionado = document.getElementById('nomeSelecionado');
+const elListaRegistros = document.getElementById('listaRegistros');
+const elModalFundo = document.getElementById('modalFundo');
+const elInputNome = document.getElementById('inputNome');
+const elInputImagem = document.getElementById('inputImagem');
+const elNomeArquivoSelecionado = document.getElementById('nomeArquivoSelecionado');
+const elPreviewImagem = document.getElementById('previewImagem');
+const elModalTitulo = document.getElementById('modalTitulo');
+const elInputBusca = document.getElementById('inputBusca');
+const elBtnLimparBusca = document.getElementById('btnLimparBusca');
+const elCategoriasFiltro = document.getElementById('categoriasFiltro');
+const elInputCategoria = document.getElementById('inputCategoria');
+const elListaCategorias = document.getElementById('listaCategorias');
+const elToast = document.getElementById('toast');
+let termoBusca = '';
+let categoriaFiltro = '';
+let imagemSelecionadaBase64 = '';
+
+function mostrarToast(mensagem){
+  elToast.textContent = mensagem;
+  elToast.classList.add('visivel');
+  clearTimeout(elToast._timer);
+  elToast._timer = setTimeout(()=>elToast.classList.remove('visivel'), 2400);
+}
+
+function atualizarListaCategorias(){
+  const existentes = produtos.map(p=>p.categoria).filter(Boolean);
+  const todas = Array.from(new Set([...CATEGORIAS_SUGERIDAS, ...existentes]));
+  elListaCategorias.innerHTML = todas.map(c=>`<option value="${c}"></option>`).join('');
+}
+
+function renderCategoriasFiltro(){
+  const categorias = Array.from(new Set(produtos.map(p=>p.categoria || 'Outros')));
+  elCategoriasFiltro.innerHTML = '';
+  const chipTodos = document.createElement('button');
+  chipTodos.className = 'chip-categoria' + (categoriaFiltro === '' ? ' ativa' : '');
+  chipTodos.textContent = 'Todos';
+  chipTodos.addEventListener('click', ()=>{ categoriaFiltro=''; renderCategoriasFiltro(); renderCatalogo(); });
+  elCategoriasFiltro.appendChild(chipTodos);
+  categorias.forEach((cat, indice)=>{
+    const chip = document.createElement('button');
+    chip.className = 'chip-categoria' + (categoriaFiltro === cat ? ' ativa' : '');
+    chip.style.animationDelay = (indice*40) + 'ms';
+    chip.textContent = cat;
+    chip.addEventListener('click', ()=>{ categoriaFiltro=cat; renderCategoriasFiltro(); renderCatalogo(); });
+    elCategoriasFiltro.appendChild(chip);
+  });
+}
+
+function renderCatalogo(){
+  elCatalogo.innerHTML = '';
+  const filtro = termoBusca.trim().toLowerCase();
+  let produtosFiltrados = filtro
+    ? produtos.filter(p=>p.nome.toLowerCase().includes(filtro))
+    : produtos.slice();
+
+  if(categoriaFiltro){
+    produtosFiltrados = produtosFiltrados.filter(p=>(p.categoria || 'Outros') === categoriaFiltro);
+  }
+
+  produtosFiltrados = produtosFiltrados
+    .map((p,i)=>({p,i}))
+    .sort((a,b)=> (b.p.favorito?1:0) - (a.p.favorito?1:0) || a.i - b.i)
+    .map(o=>o.p);
+
+  if(produtosFiltrados.length === 0){
+    const aviso = document.createElement('div');
+    aviso.className = 'sem-resultado';
+    aviso.textContent = termoBusca.trim()
+      ? `Nenhum produto encontrado para "${termoBusca.trim()}".`
+      : 'Nenhum produto nesta categoria.';
+    elCatalogo.appendChild(aviso);
+  }
+
+  produtosFiltrados.forEach((produto, indice)=>{
+    const card = document.createElement('div');
+    card.className = 'produto-card' + (produto.id === produtoSelecionadoId ? ' selecionado' : '');
+    card.style.animationDelay = Math.min(indice * 45, 500) + 'ms';
+    card.innerHTML = `
+      ${produto.favorito ? '<div class="selo-favorito">⭐ Favorito</div>' : ''}
+      <div class="acoes-produto">
+        <button class="icone-mini favorito${produto.favorito ? ' ativo' : ''}" title="Marcar como favorito" data-id="${produto.id}">${produto.favorito ? '★' : '☆'}</button>
+        <button class="icone-mini editar" title="Editar produto" data-id="${produto.id}">✎</button>
+        <button class="icone-mini excluir" title="Excluir produto" data-id="${produto.id}">✕</button>
+      </div>
+      <div class="img-wrap">
+        <img src="${produto.imagem || ICONE_PADRAO}" onerror="this.src='${ICONE_PADRAO}'" alt="${produto.nome}">
+      </div>
+      <div class="nome">${produto.nome}</div>
+    `;
+    card.addEventListener('click', (ev)=>{
+      if(ev.target.closest('.icone-mini')) return;
+      selecionarProduto(produto.id);
+    });
+    card.querySelector('.favorito').addEventListener('click', ()=>alternarFavorito(produto.id));
+    card.querySelector('.editar').addEventListener('click', ()=>abrirModalEdicao(produto.id));
+    card.querySelector('.excluir').addEventListener('click', ()=>excluirProduto(produto.id));
+    elCatalogo.appendChild(card);
+  });
+
+  const cardAdd = document.createElement('button');
+  cardAdd.className = 'produto-card card-add';
+  cardAdd.innerHTML = `<span class="mais">+</span><span>Novo produto</span>`;
+  cardAdd.addEventListener('click', abrirModalNovo);
+  elCatalogo.appendChild(cardAdd);
+}
+
+function alternarFavorito(id){
+  const produto = produtos.find(p=>p.id===id);
+  if(!produto) return;
+  produto.favorito = !produto.favorito;
+  salvar(CHAVE_PRODUTOS, produtos);
+  renderCatalogo();
+  if(produto.favorito) mostrarToast(`⭐ ${produto.nome} marcado como favorito`);
+}
+
+function selecionarProduto(id){
+  produtoSelecionadoId = id;
+  const produto = produtos.find(p=>p.id===id);
+  elNomeSelecionado.textContent = produto.nome;
+  elQuantidadeArea.classList.remove('escondido');
+  renderCatalogo();
+  elQuantidadeArea.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function montarBotoesQuantidade(){
+  elQuantidadeBotoes.innerHTML = '';
+  for(let i=1;i<=8;i++){
+    const btn = document.createElement('button');
+    btn.className = 'qtd-tag';
+    btn.textContent = i;
+    btn.style.animationDelay = (i*40) + 'ms';
+    btn.addEventListener('click', ()=>registrarQuantidade(i));
+    elQuantidadeBotoes.appendChild(btn);
+  }
+}
+
+function registrarQuantidade(quantidade){
+  const produto = produtos.find(p=>p.id===produtoSelecionadoId);
+  if(!produto) return;
+  registros.unshift({
+    id: 'r' + Date.now(),
+    produtoId: produto.id,
+    nome: produto.nome,
+    imagem: produto.imagem,
+    quantidade,
+    data: new Date().toLocaleString('pt-BR')
+  });
+  salvar(CHAVE_REGISTROS, registros);
+  cancelarSelecao();
+  renderRegistros();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function cancelarSelecao(){
+  produtoSelecionadoId = null;
+  elQuantidadeArea.classList.add('escondido');
+  renderCatalogo();
+}
+
+function renderRegistros(){
+  if(registros.length === 0){
+    elListaRegistros.innerHTML = '<div class="vazio">Nenhum item registrado ainda.</div>';
+    return;
+  }
+  elListaRegistros.innerHTML = '';
+  registros.forEach((reg, indice)=>{
+    const item = document.createElement('div');
+    item.className = 'registro-item';
+    item.style.animationDelay = Math.min(indice * 35, 400) + 'ms';
+    item.innerHTML = `
+      <img src="${reg.imagem || ICONE_PADRAO}" onerror="this.src='${ICONE_PADRAO}'" alt="${reg.nome}">
+      <div class="registro-info">
+        <div class="nome">${reg.nome}</div>
+        <div class="data">${reg.data}</div>
+      </div>
+      <div class="registro-qtd">${reg.quantidade}x</div>
+      <button class="btn-remover-registro" title="Remover este registro" data-id="${reg.id}">✕</button>
+    `;
+    item.querySelector('.btn-remover-registro').addEventListener('click', ()=>excluirRegistro(reg.id));
+    elListaRegistros.appendChild(item);
+  });
+}
+
+function excluirRegistro(id){
+  const item = elListaRegistros.querySelector(`.btn-remover-registro[data-id="${id}"]`)?.closest('.registro-item');
+  const finalizarRemocao = ()=>{
+    registros = registros.filter(r=>r.id !== id);
+    salvar(CHAVE_REGISTROS, registros);
+    renderRegistros();
+  };
+  if(item){
+    item.classList.add('saindo');
+    item.addEventListener('animationend', finalizarRemocao, {once:true});
+  }else{
+    finalizarRemocao();
+  }
+}
+
+document.getElementById('btnLimparTudo').addEventListener('click', ()=>{
+  if(registros.length === 0) return;
+  if(confirm('Excluir todos os itens registrados? Essa ação não pode ser desfeita.')){
+    registros = [];
+    salvar(CHAVE_REGISTROS, registros);
+    renderRegistros();
+  }
+});
+
+document.getElementById('btnCancelarSelecao').addEventListener('click', cancelarSelecao);
+
+/* ----- Modal de produto (novo / editar) ----- */
+function abrirModalNovo(){
+  modoEdicaoId = null;
+  elModalTitulo.textContent = 'Novo produto';
+  elInputNome.value = '';
+  elInputCategoria.value = '';
+  elInputImagem.value = '';
+  elNomeArquivoSelecionado.textContent = '';
+  imagemSelecionadaBase64 = '';
+  atualizarPreview();
+  atualizarListaCategorias();
+  elModalFundo.classList.remove('escondido');
+  elInputNome.focus();
+}
+
+function abrirModalEdicao(id){
+  const produto = produtos.find(p=>p.id===id);
+  if(!produto) return;
+  modoEdicaoId = id;
+  elModalTitulo.textContent = 'Editar produto';
+  elInputNome.value = produto.nome;
+  elInputCategoria.value = produto.categoria || '';
+  elInputImagem.value = '';
+  elNomeArquivoSelecionado.textContent = '';
+  imagemSelecionadaBase64 = produto.imagem || '';
+  atualizarPreview();
+  atualizarListaCategorias();
+  elModalFundo.classList.remove('escondido');
+  elInputNome.focus();
+}
+
+function fecharModal(){
+  elModalFundo.classList.add('escondido');
+}
+
+function atualizarPreview(){
+  if(imagemSelecionadaBase64){
+    elPreviewImagem.innerHTML = `<img src="${imagemSelecionadaBase64}">`;
+  }else{
+    elPreviewImagem.innerHTML = '<span>Pré-visualização da imagem</span>';
+  }
+}
+
+elInputImagem.addEventListener('change', ()=>{
+  const arquivo = elInputImagem.files[0];
+  if(!arquivo) return;
+  elNomeArquivoSelecionado.textContent = arquivo.name;
+  const leitor = new FileReader();
+  leitor.onload = (ev)=>{
+    imagemSelecionadaBase64 = ev.target.result;
+    atualizarPreview();
+  };
+  leitor.readAsDataURL(arquivo);
+});
+
+document.getElementById('btnNovoProduto').addEventListener('click', abrirModalNovo);
+document.getElementById('btnCancelarModal').addEventListener('click', fecharModal);
+elModalFundo.addEventListener('click', (ev)=>{ if(ev.target === elModalFundo) fecharModal(); });
+
+document.getElementById('btnSalvarProduto').addEventListener('click', ()=>{
+  const nome = elInputNome.value.trim();
+  if(!nome){
+    alert('Digite o nome do produto.');
+    return;
+  }
+  const categoria = elInputCategoria.value.trim() || 'Outros';
+  if(modoEdicaoId){
+    const produto = produtos.find(p=>p.id===modoEdicaoId);
+    produto.nome = nome;
+    produto.imagem = imagemSelecionadaBase64;
+    produto.categoria = categoria;
+  }else{
+    produtos.push({id:'p'+Date.now(), nome, imagem: imagemSelecionadaBase64, categoria, favorito:false});
+  }
+  salvar(CHAVE_PRODUTOS, produtos);
+  fecharModal();
+  renderCategoriasFiltro();
+  renderCatalogo();
+});
+
+function excluirProduto(id){
+  const produto = produtos.find(p=>p.id===id);
+  if(!produto) return;
+  if(confirm(`Excluir o produto "${produto.nome}" do catálogo?`)){
+    produtos = produtos.filter(p=>p.id !== id);
+    salvar(CHAVE_PRODUTOS, produtos);
+    if(produtoSelecionadoId === id) cancelarSelecao();
+    renderCategoriasFiltro();
+    renderCatalogo();
+  }
+}
+
+/* ----- Compartilhar lista ----- */
+const elModalCompartilhar = document.getElementById('modalCompartilhar');
+const elPreviewTextoCompartilhar = document.getElementById('previewTextoCompartilhar');
+
+function montarTextoCompartilhamento(){
+  if(registros.length === 0) return 'Nenhum item registrado ainda.';
+  const agrupado = {};
+  registros.forEach(r=>{
+    agrupado[r.nome] = (agrupado[r.nome] || 0) + r.quantidade;
+  });
+  const linhas = Object.entries(agrupado).map(([nome, qtd])=>`• ${nome} — ${qtd}x`);
+  const dataAtual = new Date().toLocaleDateString('pt-BR');
+  return `📋 Lista de abastecimento - Mercearia\n${dataAtual}\n\n${linhas.join('\n')}\n\nTotal de itens registrados: ${registros.length}`;
+}
+
+document.getElementById('btnCompartilhar').addEventListener('click', ()=>{
+  elPreviewTextoCompartilhar.textContent = montarTextoCompartilhamento();
+  elModalCompartilhar.classList.remove('escondido');
+});
+
+document.getElementById('btnFecharCompartilhar').addEventListener('click', ()=>{
+  elModalCompartilhar.classList.add('escondido');
+});
+elModalCompartilhar.addEventListener('click', (ev)=>{ if(ev.target === elModalCompartilhar) elModalCompartilhar.classList.add('escondido'); });
+
+document.getElementById('btnEnviarWhatsapp').addEventListener('click', ()=>{
+  const texto = montarTextoCompartilhamento();
+  window.open(`https://wa.me/?text=${encodeURIComponent(texto)}`, '_blank');
+});
+
+document.getElementById('btnCopiarTexto').addEventListener('click', async ()=>{
+  const texto = montarTextoCompartilhamento();
+  try{
+    await navigator.clipboard.writeText(texto);
+    mostrarToast('📋 Lista copiada!');
+  }catch(e){
+    const areaTemp = document.createElement('textarea');
+    areaTemp.value = texto;
+    document.body.appendChild(areaTemp);
+    areaTemp.select();
+    try{ document.execCommand('copy'); mostrarToast('📋 Lista copiada!'); }
+    catch(e2){ alert('Não foi possível copiar automaticamente. Selecione o texto manualmente.'); }
+    document.body.removeChild(areaTemp);
+  }
+});
+
+/* ----- Inicialização ----- */
+elInputBusca.addEventListener('input', ()=>{
+  termoBusca = elInputBusca.value;
+  elBtnLimparBusca.classList.toggle('visivel', termoBusca.length > 0);
+  renderCatalogo();
+});
+
+elBtnLimparBusca.addEventListener('click', ()=>{
+  termoBusca = '';
+  elInputBusca.value = '';
+  elBtnLimparBusca.classList.remove('visivel');
+  renderCatalogo();
+  elInputBusca.focus();
+});
+
+montarBotoesQuantidade();
+atualizarListaCategorias();
+renderCategoriasFiltro();
+renderCatalogo();
+renderRegistros();
+</script>
+
+</body>
+</html>
