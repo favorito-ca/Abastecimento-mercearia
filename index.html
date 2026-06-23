@@ -279,7 +279,7 @@
     background:var(--branco);
     border:2px solid var(--borda);
     border-radius:16px;
-    padding:14px;
+    padding:10px;
     cursor:pointer;
     position:relative;
     text-align:center;
@@ -293,13 +293,14 @@
   .produto-card.selecionado{border-color:var(--laranja);background:#FFF5EE;animation:fadeInUp .45s ease both, pulsoSelecionado 1.4s ease 1;}
   .produto-card .img-wrap{
     width:100%;
-    height:clamp(180px, 34vw, 280px);
+    height:clamp(230px, 44vw, 360px);
     display:flex;
     align-items:center;
     justify-content:center;
     overflow:hidden;
     margin-bottom:10px;
     border-radius:10px;
+    background:var(--verde-claro);
   }
   .produto-card img{
     width:100%;
@@ -318,20 +319,23 @@
     top:8px;
     right:8px;
     display:flex;
-    gap:5px;
+    gap:8px;
+    z-index:2;
   }
   .icone-mini{
-    width:28px;height:28px;
+    width:44px;height:44px;
     border-radius:50%;
     border:none;
-    font-size:13px;
+    font-size:20px;
     cursor:pointer;
     display:flex;align-items:center;justify-content:center;
     background:var(--verde-claro);
     color:var(--verde-escuro);
+    box-shadow:0 2px 6px rgba(0,0,0,0.18);
+    transition:transform .12s ease, filter .12s ease;
   }
   .icone-mini.excluir{background:#F7DEDA;color:var(--vermelho);}
-  .icone-mini.favorito{background:#FFF3D6;color:#B8860B;font-size:14px;}
+  .icone-mini.favorito{background:#FFF3D6;color:#B8860B;font-size:22px;}
   .icone-mini.favorito.ativo{background:#FFD86B;color:#8A5B00;}
   .icone-mini:hover{filter:brightness(0.92);}
   .icone-mini:active{transform:scale(0.88);}
@@ -594,13 +598,75 @@
 
   @media (max-width:480px){
     .catalogo-grid{grid-template-columns:repeat(auto-fill,minmax(155px,1fr));}
-    .produto-card .img-wrap{height:clamp(140px, 40vw, 220px);}
+    .produto-card .img-wrap{height:clamp(170px, 48vw, 260px);}
+    .icone-mini{width:40px;height:40px;font-size:18px;}
+    .icone-mini.favorito{font-size:20px;}
   }
 
   :focus-visible{outline:3px solid var(--laranja);outline-offset:2px;}
 </style>
 </head>
 <body>
+
+<!-- ===== GATE DE SENHA ===== -->
+<div id="gate-overlay" style="
+  position:fixed; inset:0; background:#ffffff; z-index:999999;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  font-family:system-ui,-apple-system,sans-serif; text-align:center; padding:24px;">
+  <div style="font-size:40px; margin-bottom:12px;">🔒</div>
+  <div style="font-size:16px; color:#333; margin-bottom:16px;">Digite a senha para continuar</div>
+  <input id="gate-input" type="password" inputmode="text" autocomplete="off"
+    style="font-size:18px; padding:10px 14px; border:1px solid #ccc; border-radius:8px; width:220px; text-align:center;">
+  <button id="gate-btn"
+    style="margin-top:12px; font-size:16px; padding:10px 22px; border-radius:8px; border:none; background:#16a34a; color:#fff; cursor:pointer;">
+    Entrar
+  </button>
+  <div id="gate-erro" style="color:#dc2626; font-size:14px; margin-top:10px; height:18px;"></div>
+</div>
+<script>
+(function () {
+  var SENHA_HASH = "2e103ed5c8a948567d834595859687108accb3fc763cd88060d1241d9a6e5103";
+  var LEMBRAR = true;
+
+  var overlay = document.getElementById('gate-overlay');
+  var input = document.getElementById('gate-input');
+  var btn = document.getElementById('gate-btn');
+  var erro = document.getElementById('gate-erro');
+  var STORAGE_KEY = 'gate-ok-' + location.pathname;
+
+  if (LEMBRAR && localStorage.getItem(STORAGE_KEY) === SENHA_HASH) {
+    overlay.remove();
+    return;
+  }
+
+  async function sha256(texto) {
+    var data = new TextEncoder().encode(texto);
+    var buffer = await crypto.subtle.digest('SHA-256', data);
+    return Array.from(new Uint8Array(buffer)).map(function (b) {
+      return b.toString(16).padStart(2, '0');
+    }).join('');
+  }
+
+  async function tentar() {
+    erro.textContent = '';
+    var hash = await sha256(input.value);
+    if (hash === SENHA_HASH) {
+      if (LEMBRAR) localStorage.setItem(STORAGE_KEY, SENHA_HASH);
+      overlay.remove();
+    } else {
+      erro.textContent = 'Senha incorreta';
+      input.value = '';
+      input.focus();
+    }
+  }
+
+  btn.addEventListener('click', tentar);
+  input.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') tentar();
+  });
+})();
+</script>
+<!-- ===== FIM GATE DE SENHA ===== -->
 
 <div class="fundo-animado" aria-hidden="true">
   <span style="top:6%; left:8%; font-size:46px; animation:derivar1 18s ease-in-out infinite;">🛒</span>
@@ -826,9 +892,9 @@ function renderCatalogo(){
     card.innerHTML = `
       ${produto.favorito ? '<div class="selo-favorito">⭐ Favorito</div>' : ''}
       <div class="acoes-produto">
-        <button class="icone-mini favorito${produto.favorito ? ' ativo' : ''}" title="Marcar como favorito" data-id="${produto.id}">${produto.favorito ? '★' : '☆'}</button>
-        <button class="icone-mini editar" title="Editar produto" data-id="${produto.id}">✎</button>
-        <button class="icone-mini excluir" title="Excluir produto" data-id="${produto.id}">✕</button>
+        <button class="icone-mini favorito${produto.favorito ? ' ativo' : ''}" title="Marcar como favorito" aria-label="Marcar ${produto.nome} como favorito" data-id="${produto.id}">${produto.favorito ? '★' : '☆'}</button>
+        <button class="icone-mini editar" title="Editar produto" aria-label="Editar ${produto.nome}" data-id="${produto.id}">✎</button>
+        <button class="icone-mini excluir" title="Excluir produto" aria-label="Excluir ${produto.nome}" data-id="${produto.id}">✕</button>
       </div>
       <div class="img-wrap">
         <img src="${produto.imagem || ICONE_PADRAO}" onerror="this.src='${ICONE_PADRAO}'" alt="${produto.nome}">
@@ -839,9 +905,9 @@ function renderCatalogo(){
       if(ev.target.closest('.icone-mini')) return;
       selecionarProduto(produto.id);
     });
-    card.querySelector('.favorito').addEventListener('click', ()=>alternarFavorito(produto.id));
-    card.querySelector('.editar').addEventListener('click', ()=>abrirModalEdicao(produto.id));
-    card.querySelector('.excluir').addEventListener('click', ()=>excluirProduto(produto.id));
+    card.querySelector('.favorito').addEventListener('click', (ev)=>{ ev.stopPropagation(); alternarFavorito(produto.id); });
+    card.querySelector('.editar').addEventListener('click', (ev)=>{ ev.stopPropagation(); abrirModalEdicao(produto.id); });
+    card.querySelector('.excluir').addEventListener('click', (ev)=>{ ev.stopPropagation(); excluirProduto(produto.id); });
     elCatalogo.appendChild(card);
   });
 
